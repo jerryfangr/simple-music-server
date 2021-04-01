@@ -2,7 +2,6 @@ var express = require('express');
 var router = express.Router();
 var fileUpload = require('express-fileupload');
 var path = require('path');
-const getToken = require('../../tools/token');
 
 // router.use((req, res, next) => {
 //   res.header("Access-Control-Allow-Origin", "*");
@@ -12,24 +11,6 @@ const getToken = require('../../tools/token');
 //   next();
 // })
 
-
-/**
- * * check token
- */
-router.use((req, res, next) => {
-  const token = req.query.token || req.body.token;
-  if (token !== getToken().value) {
-    res.status(403).json({
-      status: 'failed',
-      error: {
-        code: 403,
-        describe: 'bad token'
-      }
-    })
-  } else {
-    next();
-  }
-});
 
 /**
  * * get music file
@@ -45,6 +26,7 @@ router.get('/file/:fileName', function (req, res, next) {
  */
 router.delete('/file/:fileName', function (req, res, next) {
   let fileName = req.params.fileName;
+  let filepath = path.join('db/music/file', fileName);
   fs.unlink(filepath, () => {
     res.json({
       status: 'ok',
