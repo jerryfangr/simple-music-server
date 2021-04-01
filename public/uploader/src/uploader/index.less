@@ -1,0 +1,63 @@
+/* variable */
+@active-color: #ddd;
+.active {
+  background-color: @active-color;
+}
+
+
+/* normalize */
+* { margin: 0;padding: 0;}
+ul,ol,li { list-style: none; }
+a {color: inherit; text-decoration: none;}
+input {font: inherit;}
+html,body {
+  width: 100%;
+  height: 100%;
+}
+
+body .page {
+  width: 100%;
+  height: 100%;
+  display: flex;
+
+  /* aside */
+  aside.section {
+    width: 20%;
+    height: 100%;
+    background: #000;
+    display: flex;
+    flex-direction: column;
+  }
+
+  /* main */
+  main.section {
+    width: 80%;
+    height: 100%;
+    background: #ffffff;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    .uploader {
+      display: none;
+      &.active {
+        display: block;
+        width: 100%;
+      }
+      max-width: 1000px;
+      height: 630px;
+      border-radius: 40px;
+      background: #dfffff;
+      background: radial-gradient(circle, #dfffff 0%, #dfffff 65%, #f2ffff 100%);
+      // box-shadow: 0 0 10px 0 #c9ecec;
+
+      .title {
+        font-family: system-ui, 'Gill Sans', sans-serif;
+        font-size: 50px;
+        font-weight: 600;
+        color: #443da6;
+        text-align: center;
+      }
+    }
+  }
+}
