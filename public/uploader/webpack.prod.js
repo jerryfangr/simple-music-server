@@ -9,9 +9,8 @@ module.exports = merge(commonConfig, {
     path: path.resolve(__dirname, "dist"),
     filename: "[name].[contenthash].js",
     sourceMapFilename: "[file].map",
-    // 实际部署服务及的静态文件绝对路径或相对路径
     publicPath: "./",
-    //publicPath: "https:www.xxx.cn/image"
+    //publicPath: "https:www.xxx.con/"
   },
   module: {
     rules: [
@@ -38,7 +37,6 @@ module.exports = merge(commonConfig, {
     ],
   },
   plugins: [
-    // 打包css成文件
     new MiniCssExtractPlugin({
       filename: "styles/[name].[contenthash].css",
     }),
