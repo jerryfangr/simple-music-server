@@ -1,8 +1,7 @@
+import './common.less';
 import './index.less';
-import uploader from './components/upload-box/upload-box';
+import './components/upload-box/upload-box';
 
-console.log('uploader', uploader);
-uploader.init()
 // songForm.defaultInit()
 // songCreator.defaultInit()
 // songList.defaultInit()
