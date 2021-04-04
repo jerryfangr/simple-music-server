@@ -49,7 +49,7 @@ module.exports = {
     new CleanWebpackPlugin(),
     new HtmlWebpackPlugin({
       filename: 'index.html',
-      template: './src/asserts/index.html',
+      template: './src/assets/index.html',
       chunks: ['index']
     }),
   ],
