@@ -125,7 +125,6 @@ main.section {
         .upload-link,
         .upload-progress {
           display: inline-block;
-          box-sizing: border-box;
           overflow: hidden;
 
           &.deactive {
@@ -161,8 +160,8 @@ main.section {
             text-align: center;
           }
 
-          &.warning .tip {
-            color: #c51010;
+          &.warning .tip .text{
+            color: #ee2d51;
           }
         }
 
@@ -227,7 +226,75 @@ main.section {
           }
         }
 
-        .upload-link {}
+        .upload-link {
+          width: 100%;
+          height: 70%;
+          // margin-top: 0%;
+          .flex-layout(space-evenly, flex-start);
+
+
+          .upload-status {
+            display: inline-block;
+            .flex-layout();
+            flex-direction: column;
+            .circle-wrapper {
+              width: 80px;
+              height: 80px;
+              border-radius: 50%;
+              background-color: #f4fff8;
+              color: #5ed5a1;
+              .flex-layout();
+              font-size: 40px;
+            }
+
+            .tips {
+              margin-top: 30px;
+              font-weight: 900;
+              font-size: 17px;
+              color: #4a4893;
+            }
+          }
+
+          .separate-line {
+            width: 2px;
+            height: 100%;
+            background: #fbfcfb;
+          }
+
+          .link-content {
+            .link-text {
+              font-size: 13px;
+              color: #cad0d4;
+              font-weight: 600;
+              height: 80px;
+              min-width: 230px;
+              background: #fdfdfd;
+              padding: 20px 10px;
+              border-radius: 15px;
+              .text {
+                margin-top: 10px;
+                color: #a2a0cb;
+              }
+            }
+
+            .copy-button {
+              margin-top: 20px;
+              background: #f4fff8;
+              font-size: 16px;
+              color: #a0e1c4;
+              font-weight: 600;
+              text-align: center;
+              padding: 10px 20px;
+              border-radius: 10px;
+              cursor: pointer;
+              transition: all .3s;
+              &:hover {
+                color: #89e0b9;
+                box-shadow: 0 0 8px #caddd7;
+              }
+            }
+          }
+        }
       }
     }
   }
