@@ -5,6 +5,12 @@ var musicRouter = require('./music/index');
 var fileRouter = require('./file/index');
 const getToken = require('../tools/token');
 
+router.use((req, res, next) => {
+  res.header("Access-Control-Allow-Origin", "*");
+  res.header('Access-Control-Allow-Methods', 'PUT, GET, POST, DELETE, OPTIONS');
+  next();
+});
+
 router.get('/', function(req, res, next) {
   res.redirect('/uploader/dist/uploader.html')
 });
@@ -19,7 +25,7 @@ router.get('/uploader/:fileName', function (req, res, next) {
  * * get token
  */
 router.get('/token', function (req, res, next) {
-  const token = getToken().value;
+  const token = getToken();
   res.json({
     status: 'ok',
     result: { token },
@@ -32,7 +38,7 @@ router.get('/token', function (req, res, next) {
  */
 router.use((req, res, next) => {
   const token = req.query.token || req.body.token;
-  if (token !== getToken().value) {
+  if (token !== getToken()) {
     res.status(403).json({
       status: 'fail',
       error: {

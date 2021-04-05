@@ -3,6 +3,12 @@ var router = express.Router();
 var JsonDatabase = require('../../tools/json-database');
 const musicDB = new JsonDatabase('music');
 
+/**
+ * * options allowed
+ */
+router.options('/', function (req, res, next) {
+  res.sendStatus(200)
+});
 
 /**
  * * get all songs
