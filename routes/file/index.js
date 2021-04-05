@@ -2,11 +2,13 @@ var express = require('express');
 var router = express.Router();
 var fileUpload = require('express-fileupload');
 var path = require('path');
+var JsonDatabase = require('../../tools/json-database');
+const fileDB = new JsonDatabase('file');
 
 /**
  * * options allowed
  */
-router.options('', function (req, res, next) {
+router.options('/', function (req, res, next) {
   res.sendStatus(200)
 })
 
@@ -63,25 +65,32 @@ router.post('/', function (req, res) {
   }
 
   for (const key in req.files) {
-    const musicFile = req.files[key];
-    const uploadPath = path.join('db/music', musicFile.name);
-    musicFile.mv(uploadPath, function (err) {
+    const uploadFile = req.files[key];
+    const uploadPath = path.join('db/music', uploadFile.name);
+    uploadFile.mv(uploadPath, function (err) {
       if (err) {
-        res.json({
+        return res.json({
           status: 'fail',
           error: {
             code: 500,
             describe: 'server save fail'
           }
         });
-        console.log(err);
-
       }
-      res.json({
-        status: 'ok',
-        result: { url: '/file/' + musicFile.name},
-        error: {}
-      });
+
+      fileDB.fetchAll().add({
+        name: uploadFile.name,
+        url: '/file/' + uploadFile.name
+      }).send(() => {
+        res.json({
+          status: 'ok',
+          result: { url: '/file/' + uploadFile.name },
+          error: {}
+        });
+      }, err => {
+        console.log('---->', err);
+      })
+
     });
   }
 });

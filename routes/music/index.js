@@ -38,7 +38,7 @@ router.get('/:id', function (req, res, next) {
  * * create a song
  */
 router.post('/', function (req, res, next) {
-  musicDB.fetchAll().add(req.body, () => {
+  musicDB.fetchAll().add(req.body).send(() => {
     res.send('success');
   }, error => {
     res.send(error);
@@ -52,7 +52,7 @@ router.put('/:id', function (req, res, next) {
   let data = req.body;
   let id = req.params.id || req.body.id;
   data.id = id;
-  musicDB.fetchAll().update(data, () => {
+  musicDB.fetchAll().update(data).send(() => {
     res.send('update success');
   }, error => {
     res.send(error);
@@ -64,7 +64,7 @@ router.put('/:id', function (req, res, next) {
  */
 router.delete('/:id', function (req, res, next) {
   let id = req.params.id;
-  musicDB.fetchAll().remove(id, () => {
+  musicDB.fetchAll().remove(id).send(() => {
     res.send('success');
   }, error => {
     res.send(error);

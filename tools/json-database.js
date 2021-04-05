@@ -30,6 +30,11 @@ class JsonDatabase {
       });
     }).then((data) => {
       return JSON.parse(data || '[]')
+    }, error => {
+      if (error.errno === -4058) {
+        return [];
+      }
+      throw error;
     });
   }
 
@@ -187,7 +192,7 @@ class JsonDatabase {
    * @param {Function} fail
    * @param {Boolean} force force do this function, it may clear all data
    */
-  send(force, success, fail) {
+  send(success, fail, force) {
     if (this._state === 'send') { return; }
     if (!force && this._state === 'init') {
       throw new Error('Not allowed to start width send funtion, or set param force true(clear all data)')
