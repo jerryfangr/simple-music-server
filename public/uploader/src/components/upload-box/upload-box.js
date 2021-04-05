@@ -49,7 +49,7 @@ const TEMPLATE = `
         </div>
 
         <div class="bar-wrapper left">
-          <div id="progressleft" class="bar"></div>
+          <div id="progressLeft" class="bar"></div>
         </div>
         <!--  circle process bar end  -->
 
@@ -63,7 +63,6 @@ const TEMPLATE = `
       <!-- upload progress end -->
 
       <!-- upload link start -->
-
       <div id="uploaLink" class="upload-link deactive">
         <!--  upload status icon start  -->
         <div class="upload-status">
@@ -87,11 +86,17 @@ const TEMPLATE = `
             <p id="fileLink" class="text">{{ fileLink }}</p>
           </div>
 
-          <div id="copyButton" class="copy-button">
-            <svg class="icon" aria-hidden="true">
-              <use xlink:href="#icon-copy"></use>
-            </svg>
-            Copy Link
+          <div class="operate-button">
+            <div id="backButton" class="back-button">
+              < Back
+            </div>
+
+            <div id="copyButton" class="copy-button">
+              <svg class="icon" aria-hidden="true">
+                <use xlink:href="#icon-copy"></use>
+              </svg>
+              Copy
+            </div>
           </div>
         </div>
         <!-- link content end  -->
@@ -128,22 +133,22 @@ class UploadView extends View {
     // uploadProgress
     this.uploadProgressDom = this.qs('#uploadProgress');
     this.progressRight = this.qs('#progressRight');
-    this.progressleft = this.qs('#progressleft');
+    this.progressLeft = this.qs('#progressLeft');
     this.isUploadHalf = false;
     this.uploadPercentDom = this.qs('#uploadProgress #progressPercent');
     // uploaLink
     this.uploaLinkDom = this.qs('#uploaLink');
     this.fileLinkDom = this.qs('#uploaLink #fileLink');
-    this.copyButtonDom = this.qs('#uploaLink .copy-button');
+    this.copyButtonDom = this.qs('#uploaLink #copyButton');
+    this.backButtonDom = this.qs('#uploaLink #backButton');
   }
-
 
   beforeRender() {
     this.setAttr('tips', 'Drag & Drop File here to upload', (value) => {
       this.tipsDom.textContent = value;
     });
 
-    this.setAttr('progressPercent', '0%', (value) => {
+    this.setAttr('progressPercent', '0.00%', (value) => {
       this.uploadPercentDom.textContent = value;
     });
 
@@ -168,7 +173,7 @@ class UploadView extends View {
         this.progressRight.style.transform = `rotate(0deg)`;
       }
       let rotateValue = 180 * (1 - (percent - 50) / 50);
-      this.progressleft.style.transform = `rotate(-${rotateValue}deg)`;
+      this.progressLeft.style.transform = `rotate(-${rotateValue}deg)`;
     }
     this.progressPercent = percent.toFixed(2) + '%';
   }
@@ -178,7 +183,6 @@ class UploadView extends View {
     switch (state) {
       case STATE.WAIT_SELECT:
         this.tips = 'Drag & Drop File here to upload';
-        this.progressPercent = '0.00%';
         this.uploadBoxDom.classList.remove('warning');
         this.activeElement(this.uploadBoxDom);
         break;
@@ -188,6 +192,10 @@ class UploadView extends View {
         this.activeElement(this.uploadBoxDom);
         break;
       case STATE.UPLOADING_FILE:
+        this.progressPercent = '0.00%'
+        this.isUploadHalf = false;
+        this.progressRight.style.transform = 'rotate(-180deg)';
+        this.progressLeft.style.transform = 'rotate(-180deg)';
         this.activeElement(this.uploadProgressDom);
         break;
       case STATE.UPLOAD_SUCCESS:
@@ -195,9 +203,9 @@ class UploadView extends View {
         this.activeElement(this.uploaLinkDom);
         break;
       case STATE.UPLOAD_FAILED:
-        return '上传失败!';
+        return 'upload failed!';
       default:
-        return '未知错误!';
+        return 'unknow error!';
     }
   }
 
@@ -293,8 +301,8 @@ class UploadController extends Controller {
       if (this.view.state === STATE.UPLOADING_FILE) { return; }
       if ([STATE.WAIT_SELECT, STATE.NO_SELECTED].indexOf(this.view.state) !== -1) {
         this.view.inputDom = this.view.inputDom || this.view.createBrowse(() => {
-          this.selectFiles(this.view.inputDom.files);
-          this.uploadFile();
+          const file = this.selectFiles(this.view.inputDom.files);
+          file && this.uploadFile();
         });
         return this.view.inputDom.click();
       }
@@ -302,7 +310,11 @@ class UploadController extends Controller {
 
     this.bindEvent(this.view.copyButtonDom, 'click', e => {
       this.view.copyLink();
-    })
+    });
+
+    this.bindEvent(this.view.backButtonDom, 'click', e => {
+      this.view.updateState(STATE.WAIT_SELECT);
+    });
   }
 
   uploadFile() {
