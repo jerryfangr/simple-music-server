@@ -51,6 +51,15 @@ export default class View {
     this.domElement.innerHTML = this.renderTemplate();
   }
 
+  copyToClipboard(content) {
+    const inputDom = document.createElement('input');
+    inputDom.setAttribute('value', content);
+    document.body.appendChild(inputDom);
+    inputDom.select();
+    document.execCommand('copy');
+    document.body.removeChild(inputDom);
+  }
+
   renderTemplate() {
     let html = this.template;
     html.match(/{{([\w ]+)}}/ig).forEach(value => {
