@@ -1,4 +1,4 @@
-import './upload-box.less';
+import './file-uploader.less';
 import axios from 'axios';
 import eventHub from '@/vendor/event-hub';
 import API from '@/assets/api';
@@ -8,7 +8,6 @@ const STATE = {
   WAIT_SELECT: Symbol('select file'),
   NO_SELECTED: Symbol('nothing selected'),
   UPLOADING_FILE: Symbol('uploading file'),
-  UPLOAD_DONE: Symbol('upload finished'),
   UPLOAD_FAILED: Symbol('upload failed'),
   UPLOAD_SUCCESS: Symbol('upload success')
 }
@@ -143,6 +142,10 @@ class UploadView extends View {
     this.backButtonDom = this.qs('#uploaLink #backButton');
   }
 
+  /**
+   * * set TEMPLATE value before add TEMPLATE to document
+   * * ex: {{ progressPercent }} => 0.00%
+   */
   beforeRender() {
     this.setAttr('tips', 'Drag & Drop File here to upload', (value) => {
       this.tipsDom.textContent = value;
@@ -157,6 +160,9 @@ class UploadView extends View {
     });
   }
 
+  /**
+   * * copy file url to clipboard
+   */
   copyLink() {
     this.copyToClipboard(this.fileLink);
   }
@@ -178,6 +184,12 @@ class UploadView extends View {
     this.progressPercent = percent.toFixed(2) + '%';
   }
 
+  /**
+   * * update view status
+   * @param {*} state 
+   * @param {*} data 
+   * @returns 
+   */
   updateState(state, data) {
     this.state = state;
     switch (state) {
@@ -209,17 +221,29 @@ class UploadView extends View {
     }
   }
 
+  /**
+   * * active element by remove class deactive
+   * @param {*} element 
+   */
   activeElement(element) {
     this.deActiveAll();
     element.classList.remove('deactive');
   }
 
+  /**
+   * * deactive all element by add class deactive
+   */
   deActiveAll() {
     this.uploadBoxDom.classList.add('deactive');
     this.uploadProgressDom.classList.add('deactive');
     this.uploaLinkDom.classList.add('deactive');
   }
 
+  /**
+   * * open a browse windows by create a input(file) dom
+   * @param {*} callback 
+   * @returns 
+   */
   createBrowse(callback) {
     const wrapper = document.createElement('div');
     wrapper.setAttribute('style', 'width:0; height:0; overflow: hidden;');
@@ -232,6 +256,18 @@ class UploadView extends View {
     wrapper.appendChild(inputDom);
     document.body.appendChild(wrapper);
     return inputDom;
+  }
+
+  /**
+   * * toggle this dom by add/remove class active
+   * @param {Boolean} value 
+   */
+  toggle(value) {
+    if (value) {
+      this.domElement.classList.add('active');
+    } else {
+      this.domElement.classList.remove('active');
+    }
   }
 }
 
@@ -248,6 +284,9 @@ class UploadModel extends Model{
     this.update();
   }
 
+  /**
+   * * create a timer to auto update token
+   */
   update () {
     this.updateToken();
     clearInterval(this.timer);
@@ -256,6 +295,10 @@ class UploadModel extends Model{
     }, 1 * 60 * 1000);
   }
 
+  /**
+   * * update token
+   * @returns 
+   */
   updateToken() {
     return this.axios.get(API.token).then(res => {
         let data = JSON.parse(res.request.responseText);
@@ -263,6 +306,12 @@ class UploadModel extends Model{
       })
   }
 
+  /**
+   * * upload a file
+   * @param {*} file 
+   * @param {*} callback 
+   * @returns 
+   */
   uploadFile(file, callback) {
     const formData = new FormData();
     formData.append(file.name, file);
@@ -291,12 +340,14 @@ class UploadController extends Controller {
     this.stopDefault();
     this.bindEvent(document, 'webkitvisibilitychange', () => { this.model.update(); });
 
+    // Drag & Drop File event
     this.bindEvent(this.view.uploadBoxDom, 'drop', e => {
       let files = e.dataTransfer.files;
       const file = this.selectFiles(files);
       file && this.uploadFile();
     });
 
+    // browse file event
     this.bindEvent(this.view.uploadBoxDom, 'click', e => {
       if (this.view.state === STATE.UPLOADING_FILE) { return; }
       if ([STATE.WAIT_SELECT, STATE.NO_SELECTED].indexOf(this.view.state) !== -1) {
@@ -315,8 +366,16 @@ class UploadController extends Controller {
     this.bindEvent(this.view.backButtonDom, 'click', e => {
       this.view.updateState(STATE.WAIT_SELECT);
     });
+
+    eventHub.on('switch-uploader', data => {
+      this.view.toggle(data === 'file');
+    });
   }
 
+  /**
+   * * upload file and chang view status 
+   * @returns 
+   */
   uploadFile() {
     this.view.updateState(STATE.UPLOADING_FILE);
     return this.model.uploadFile(this.file, percent => {
@@ -328,10 +387,13 @@ class UploadController extends Controller {
         this.file = null;
       }, error => {
         console.log(error.response);
-        this.view.updateState(STATE.UPLOAD_DONE);
+        this.view.updateState(STATE.UPLOAD_FAILED);
       });
   }
 
+  /**
+   * * clear default event
+   */
   stopDefault() {
     this.preventDefault(document, 'drop');
     this.preventDefault(document, 'dragleave');
@@ -339,6 +401,11 @@ class UploadController extends Controller {
     this.preventDefault(document, 'dragover');
   }
 
+  /**
+   * * check the upload file 
+   * @param {*} files 
+   * @returns 
+   */
   selectFiles(files) {
     if (!files || files.length == 0) {
       return null;
@@ -348,6 +415,12 @@ class UploadController extends Controller {
     return this.file = file;
   }
 
+  /**
+   * * get file type from file suffix
+   * * ex: abc.mp3 => mp3
+   * @param {*} filename 
+   * @returns 
+   */
   getFileType(filename) {
     let array = filename.split(".");
     if (array.length <= 1) {
@@ -358,7 +431,7 @@ class UploadController extends Controller {
 }
 
 const view = new UploadView({
-  el: '#uploader',
+  el: '#fileUploader',
   template: TEMPLATE
 });
 const model = new UploadModel();

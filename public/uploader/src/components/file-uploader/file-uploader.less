@@ -1,7 +1,7 @@
 @import "@/common.less";
 
 main.section {
-  .uploader {
+  .file-uploader {
     display: none;
     box-sizing: border-box;
     padding-top: 80px;
@@ -152,12 +152,10 @@ main.section {
 
           .tip {
             height: 35%;
-            display: flex;
             font-size: 17px;
             color: #7874b9;
             font-weight: 600;
-            flex-direction: column;
-            justify-content: space-between;
+            .flex-layout(space-between, center, column);
             text-align: center;
           }
 
@@ -229,13 +227,12 @@ main.section {
 
         .upload-link {
           width: 100%;
-          height: 70%;
+          height: 78%;
           .flex-layout(space-evenly, flex-start);
 
           .upload-status {
             display: inline-block;
-            .flex-layout();
-            flex-direction: column;
+            .flex-layout(center, center, column);
 
             .circle-wrapper {
               width: 80px;
@@ -248,7 +245,7 @@ main.section {
             }
 
             .tips {
-              margin-top: 30px;
+              margin-top: 46px;
               font-weight: 900;
               font-size: 17px;
               color: #4a4893;
@@ -279,7 +276,7 @@ main.section {
             }
 
             .operate-button {
-              margin-top: 22px;
+              margin-top: 37px;
               padding-right: 10px;
               width: 100%;
               font-size: 0;

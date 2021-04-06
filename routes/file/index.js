@@ -73,7 +73,7 @@ router.post('/', function (req, res) {
           status: 'fail',
           error: {
             code: 500,
-            describe: 'server save fail'
+            describe: 'server save failed'
           }
         });
       }
@@ -88,7 +88,13 @@ router.post('/', function (req, res) {
           error: {}
         });
       }, err => {
-        console.log('---->', err);
+        return res.json({
+          status: 'fail',
+          error: {
+            code: 500,
+            describe: 'record to db failed'
+          }
+        });
       })
 
     });

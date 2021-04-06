@@ -9,6 +9,12 @@ export default class View {
 
   beforeRender() {}
 
+  /**
+   * * add a react value
+   * @param {String} key
+   * @param {any} value 
+   * @param {Function} callBack 
+   */
   setAttr(key, value, callBack) {
     const self = this;
 
@@ -32,25 +38,45 @@ export default class View {
     })
   }
 
+/**
+ * * document.querySelector
+ * @param {String} selector
+ * @returns 
+ */
   qs(selector) {
     return document.querySelector(selector);
   }
+
+  /**
+   * * document.querySelectorAll
+   * @param {String} selector
+   * @returns
+   */
   qsa(selector) {
     return document.querySelectorAll(selector);
   }
 
-  eqs(element, selector) {
+  eqs(selector, element) {
+    element = element || this.domElement || document;
     return element.querySelector(selector);
   }
 
-  eqsa(element, selector) {
+  eqsa(selector, element) {
+    element = element || this.domElement || document;
     return element.querySelectorAll(selector);
   }
 
+  /**
+   * * replace this domElement html
+   */
   render() {
-    this.domElement.innerHTML = this.renderTemplate();
+    this.domElement && (this.domElement.innerHTML = this.renderTemplate());
   }
 
+  /**
+   * * copy string content to clipboard
+   * @param {String} content 
+   */
   copyToClipboard(content) {
     const inputDom = document.createElement('input');
     inputDom.setAttribute('value', content);
@@ -60,9 +86,15 @@ export default class View {
     document.body.removeChild(inputDom);
   }
 
+
+  /**
+   * * define template rule, here is {{ prop }}
+   * @returns 
+   */
   renderTemplate() {
     let html = this.template;
-    html.match(/{{([\w ]+)}}/ig).forEach(value => {
+    const matches = html.match(/{{([\w ]+)}}/ig) || [];
+    matches.forEach(value => {
       const key = value.replace('{{', '').replace('}}', '').trim();
       html = html.replace(value, this[key] || '');
     })

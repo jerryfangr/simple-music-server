@@ -1,10 +1,11 @@
 /* variable */
 @light-color: #fefefe;
 @dark-color: #0a0220;
-.flex-layout(@justify-content: center, @align-items: center) {
+.flex-layout(@justify-content: center, @align-items: center, @flex-direction: row) {
   display: flex;
   justify-content: @justify-content;
   align-items: @align-items;
+  flex-direction: @flex-direction;
 }
 
 /* normalize */
