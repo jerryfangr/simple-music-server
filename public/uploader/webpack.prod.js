@@ -16,23 +16,52 @@ module.exports = merge(commonConfig, {
     rules: [
       {
         test: /\.css$/,
-        use: [MiniCssExtractPlugin.loader, "css-loader"],
+        use: [MiniCssExtractPlugin.loader, 'css-loader'],
       },
       {
         test: /\.less$/,
-        use: [MiniCssExtractPlugin.loader, "css-loader", "less-loader"],
-      },
-      {
-        test: /\.s[ac]ss$/i,
-        use: [MiniCssExtractPlugin.loader, "css-loader", "sass-loader"],
+        use: [
+          MiniCssExtractPlugin.loader, 
+          'css-loader',
+          {
+            loader: 'postcss-loader',
+            options: {
+              postcssOptions: {
+                plugins: [
+                  [
+                    'postcss-preset-env',
+                    { browsers: 'last 3 versions' }
+                  ]
+                ]
+              }
+            }
+          },
+          'less-loader'
+        ],
       },
       {
         test: /\.js$/,
         use: [
           {
-            loader: "babel-loader",
-          },
+            loader: 'babel-loader',
+            options: {
+              presets: [
+                [
+                  '@babel/preset-env',
+                  {
+                    targets: {
+                      'chrome': '55',
+                      'ie': '10'
+                    },
+                    'corejs': '3',
+                    'useBuiltIns': 'usage'
+                  }
+                ]
+              ]
+            }
+          }
         ],
+        exclude: /node_modules/i
       },
     ],
   },

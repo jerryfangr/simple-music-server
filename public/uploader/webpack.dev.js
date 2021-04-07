@@ -9,11 +9,6 @@ module.exports = merge(commonConfig, {
     path: path.resolve(__dirname, "dist"),
     filename: "[name].[contenthash].js",
   },
-  resolve: {
-    alias: {
-      '@': path.join(__dirname, 'src')
-    }
-  },
   module: {
     rules: [
       {
@@ -24,11 +19,7 @@ module.exports = merge(commonConfig, {
         test: /\.less$/,
         use: ["style-loader", "css-loader", "less-loader"],
       },
-      {
-        test: /\.s[ac]ss$/i,
-        use: ["style-loader", "css-loader", "sass-loader"],
-      },
-    ],
+    ]
   },
   devServer: {
     openPage: "index.html",
