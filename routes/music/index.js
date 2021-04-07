@@ -27,7 +27,6 @@ router.get('/', function (req, res, next) {
 router.get('/:id', function (req, res, next) {
   let id = req.params.id;
   musicDB.fetchAll().filter({ id }).get(data => {
-    console.log(data);
     res.send(data)
   }, error => {
     res.send(error);
