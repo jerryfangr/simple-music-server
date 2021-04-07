@@ -22,6 +22,7 @@ body .page {
     &:hover {
       width: 100px;
     }
+    
     &:hover + main.section {
       margin-left: 100px;
     }
@@ -32,9 +33,10 @@ body .page {
     margin-left: 35px;
     height: 100%;
     padding: 0 20px;
-    background: #ccc;
+    background: #fff;
     transition: all .4s;
-    .flex-layout();
+    overflow: hidden;
+    .flex-layout(center, center, column);
   }
 
   &::after {

@@ -6,24 +6,63 @@ import { Controller, Model, View } from '@/model/base/index';
 
 
 const TEMPLATE = `
+<div class="container">
+  <!-- form list start -->
+  <div class="form-container">
+    <div class="search">search</div>
+    <div class="form-list"></div>
+  </div>
+  <!-- form list end -->
 
+  <!-- form creator start-->
+  <div class="form-creator">
+    <div class="title">Song</div>
+
+    <form id="songForm" class="form">
+      <input type="text" name="cover" value="{{ cover }}" placeholder="cover url">
+      <input type="text" name="name" value="{{ name }}" placeholder="song name">
+      <input type="text" name="singer" value="{{ singer }}" placeholder="singer name">
+      <input type="text" name="url" value="{{ url }}" placeholder="song url">
+      <textarea name="lyric"cols="40" rows="10" placeholder="song lyric">{{lyric}}</textarea>
+      <button class="submit-button" type="submit">save</button>
+    </form>
+  </div>
+  <!-- form creator end-->
+
+  <!-- form switcher start -->
+  <div class="form-switch">
+    <div class="cover"></div>
+    <div class="btn"></div>
+  </div>
+  <!-- form switcher end -->
+</div>
 `;
 
 class FormView extends View {
   constructor(options) {
     super(options);
+    this.songFormDom = this.eqs('#songForm');
   }
 
   beforeRender() {
-    this.setAttr('tips', 'Drag & Drop File here to upload', (value) => {
-      this.tipsDom.textContent = value;
+    this.setAttr('tips', '', (value) => {
     });
-
   }
 
-  copyLink() {
-    this.copyToClipboard(this.fileLink);
+  /**
+   * * get form input value
+   */
+  getInput() {
+    const formData = new FormData(this.songFormDom);
+    return {
+      cover: formData.get('cover') || '',
+      name: formData.get('name') || '',
+      singer: formData.get('singer') || '',
+      url: formData.get('url') || '',
+      lyric: formData.get('lyric') || '',
+    }
   }
+
   /**
    * * toggle this dom by add/remove class active
    * @param {Boolean} value 
@@ -50,6 +89,9 @@ class FormModel extends Model {
     this.update();
   }
 
+  /**
+   * * create a timer to auto update token
+   */
   update() {
     this.updateToken();
     clearInterval(this.timer);
@@ -58,6 +100,10 @@ class FormModel extends Model {
     }, 1 * 60 * 1000);
   }
 
+  /**
+   * * update token
+   * @returns
+   */
   updateToken() {
     return this.axios.get(API.token).then(res => {
       let data = JSON.parse(res.request.responseText);
@@ -65,11 +111,9 @@ class FormModel extends Model {
     })
   }
 
-  uploadFile(file, callback) {
-    const formData = new FormData();
-    formData.append(file.name, file);
-    return this.axios.post(API.upload, formData, {
-      headers: { 'Content-Type': 'multipart/form-data' },
+  submitForm(data) {
+    console.log(data);
+    return this.axios.post(API.music, data, {
       params: { token: this.token },
     });
   }
@@ -85,6 +129,16 @@ class FormController extends Controller {
 
   bindEvents() {
     this.bindEvent(document, 'webkitvisibilitychange', () => { this.model.update(); });
+
+    this.bindEvent(this.view.songFormDom, 'submit', e => {
+      e.preventDefault();
+      e.stopPropagation();
+      
+      const data = this.view.getInput();
+      this.model.submitForm(data).then(() => {
+        console.log('success');
+      })
+    })
 
     eventHub.on('switch-uploader', data => {
       this.view.toggle(data === 'form');

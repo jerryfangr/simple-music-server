@@ -6,6 +6,7 @@ const API = {
    * * token (music & upload need this query ?token=xxx)
    */
   token: BASE_PATH + '/token',
+  
   /**
    * * music form 
    * GET     /music     get all songs
