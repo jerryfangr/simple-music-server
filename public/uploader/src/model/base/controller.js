@@ -34,10 +34,10 @@ export default class Controller {
 
   /**
    * * addEventListener
-   * @param {*} element 
-   * @param {*} eventName 
-   * @param {*} callback 
-   * @param {*} options 
+   * @param {HTMLElement} element
+   * @param {String} eventName
+   * @param {Function} callback 
+   * @param {Object} options 
    */
   bindEvent(element, eventName, callback, options) {
     options = options || {};
@@ -48,12 +48,14 @@ export default class Controller {
 
   /**
    * * prevent element's default event (form/a/...)
-   * @param {*} element 
-   * @param {*} eventName 
+   * @param {HTMLElement} element
+   * @param {String} eventName
+   * @param {*} isAll
    */
-  preventDefault(element, eventName) {
+  preventDefault(element, eventName, isAll) {
     element.addEventListener(eventName, function (e) {
       e.preventDefault();
+      isAll && e.stopPropagation();
     });
   }
 }
