@@ -1,4 +1,5 @@
 import '@/index.less';
+import '@/assets/ali-icon';
 // aside
 import '@/components/aside-section/aside-section';
 // main
