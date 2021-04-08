@@ -9,8 +9,11 @@ const TEMPLATE = `
 <div class="container">
   <!-- form list start -->
   <div class="form-container">
-    <div class="search">search</div>
-    <div class="form-list"></div>
+    <div class="search">
+      <input type="text" id="nameFilter" name="search" placeholder="name filter">
+    </div>
+
+    <div id="formList" class="form-list"></div>
   </div>
   <!-- form list end -->
 
@@ -29,24 +32,106 @@ const TEMPLATE = `
   </div>
   <!-- form creator end-->
 
-  <!-- form switcher start -->
-  <div class="form-switch">
-    <div class="cover"></div>
-    <div class="btn"></div>
+  <!-- form switch start -->
+  <div id="formSwitch" class="form-switch">
+    <div id="switchTitle" class="title">{{ switchTitle }}</div>
+    <div id="switchButton" class="button">{{ switchButton }}</div>
   </div>
-  <!-- form switcher end -->
+  <!-- form switch end -->
 </div>
 `;
 
 class FormView extends View {
   constructor(options) {
     super(options);
+    this.status = 'list';
+    this.formListDom = this.eqs('#formList');
     this.songFormDom = this.eqs('#songForm');
+    this.formSwitchDom = this.eqs('#formSwitch');
+    this.nameFilterDom = this.eqs('#nameFilter');
+    this.switchTitleDom = this.eqs('#switchTitle');
+    this.switchButtonDom = this.eqs('#switchButton');
   }
 
   beforeRender() {
-    this.setAttr('tips', '', (value) => {
+    this.setAttr('switchTitle', 'Form list', (value) => {
+      this.switchTitleDom.textContent = value;
     });
+
+    this.setAttr('switchButton', '< Create', (value) => {
+      this.switchButtonDom.textContent = value;
+    });
+
+    this.setAttr('formList', [], (value) => {
+      this.formListDom.innerHTML = '';
+      value.forEach(data => {
+        const fomItem = this.createFormItem(data);
+        this.formListDom.appendChild(fomItem);
+      })
+    });
+  }
+
+  /**
+   * * create a form-item element
+   * @param {Object} data 
+   * @returns 
+   */
+  createFormItem(data) {
+    const template = `      
+    <div class="cover">
+      <img class="image" src="${data.cover || '#'}" >
+    </div>
+
+    <div class="info">
+      <div class="name">${data.name || 'unknow'}</div>
+      <div class="author">${data.singer || 'unknow'}</div>
+    </div>
+
+    <div class="operate">
+      <a class="btn download" href=${data.url || '#'}"" download>
+        <svg class="icon" aria-hidden="true">
+          <use xlink:href="#icon-download"></use>
+        </svg>
+      </a>
+      <div class="btn delete" data-id="${data.id || '-1'}">
+        <svg class="icon" aria-hidden="true">
+          <use xlink:href="#icon-delete"></use>
+        </svg>
+      </div>
+      <div class="btn edit">
+        <svg class="icon" aria-hidden="true">
+          <use xlink:href="#icon-edit"></use>
+        </svg>
+      </div>
+    </div>
+    `
+
+    const formItem = document.createElement('li');
+    formItem.className = 'form-item';
+    formItem.innerHTML = template;
+    return formItem;
+  }
+
+  /**
+   * * move the switch wrapper(#formSwitch)
+   * @param {String} status list / create
+   * @returns 
+   */
+  switchTo(status) {
+    if (status === this.status) {
+      return;
+    }
+
+    this.status = status;
+    if (status === 'list') {
+      this.formSwitchDom.classList.remove('left');
+      this.switchTitle = 'Form list';
+      this.switchButton = '< Create';
+    } else {
+      this.formSwitchDom.classList.add('left');
+      this.switchTitle = 'Create form';
+      this.switchButton = 'Back >';
+    }
   }
 
   /**
@@ -83,7 +168,6 @@ class FormModel extends Model {
     this.token = undefined;
     this.timer = undefined;
     this.axios = axios.create({
-      // upload timeout: 10 minutes
       timeout: 10 * 60 * 1000,
     });
     this.update();
@@ -111,12 +195,34 @@ class FormModel extends Model {
     })
   }
 
+  /**
+   * * submit formData to server(json format) 
+   * @param {*} data 
+   * @returns 
+   */
   submitForm(data) {
-    console.log(data);
     return this.axios.post(API.music, data, {
       params: { token: this.token },
     });
   }
+
+  /**
+   * * get all songs
+   * @returns 
+   */
+  fetchAll() {
+    return this.axios.get(API.music, {
+      params: { token: this.token },
+    });
+  }
+
+  searchByName(name) {
+    const url = API.music + '/' + name;
+    return this.axios.get(url, {
+      params: { token: this.token },
+    });
+  }
+
 }
 
 class FormController extends Controller {
@@ -130,6 +236,10 @@ class FormController extends Controller {
   bindEvents() {
     this.bindEvent(document, 'webkitvisibilitychange', () => { this.model.update(); });
 
+    eventHub.on('switch-uploader', data => {
+      this.view.toggle(data === 'form');
+    });
+
     this.bindEvent(this.view.songFormDom, 'submit', e => {
       e.preventDefault();
       e.stopPropagation();
@@ -138,11 +248,28 @@ class FormController extends Controller {
       this.model.submitForm(data).then(() => {
         console.log('success');
       })
+    });
+
+    this.bindEvent(this.view.formSwitchDom, 'click', e => {
+      const newStatus = this.view.status === 'list' ? 'create' : 'list';
+      this.view.switchTo(newStatus);
+    });
+
+    this.bindEvent(this.view.nameFilterDom, 'input', this.debunceFunction(e => {
+      const value = e.target?.value;
+      if (value) {
+        this.model.searchByName(value).then(res => {
+          if (res.data.status === 'ok') {
+            this.view.formList = res.data.result;
+          }
+        })
+      }
+    }, 800));
+    // this.view.formListDom
+    this.listen(this.view.formListDom, '.delete', 'click', (event, element) => {
+      console.log(element);
     })
 
-    eventHub.on('switch-uploader', data => {
-      this.view.toggle(data === 'form');
-    });
   }
 
 }

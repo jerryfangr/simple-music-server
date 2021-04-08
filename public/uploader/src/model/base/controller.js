@@ -28,6 +28,7 @@ export default class Controller {
         }
         target = target.parentNode;
       }
+      
       target && callback.call(target, e, target);
     }, options);
   }

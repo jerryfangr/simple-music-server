@@ -29,7 +29,95 @@ main.section {
       }
 
       .form-container {
-        padding: 30px 20px;
+        padding: 30px;
+        .search {
+          text-align: center;
+          input {
+            border: none;
+            display: inline-block;
+            outline: none;
+            padding: 0 20px;
+            margin: 0;
+            background: #f4f4f5;
+            width: 100%;
+            height: 50px;
+            border-radius: 25px;
+          }
+        }
+
+        .form-item {
+          margin-top: 30px;
+          font-size: 0;
+          width: 355px;
+
+          .cover,
+          .info,
+          .operate {
+            display: inline-block;
+            vertical-align: middle;
+          }
+
+          .cover {
+            width: 65px;
+            height: 65px;
+            background: #fb7d63;
+            border-radius: 10px;
+            overflow: hidden;
+            .image {
+              width: 100%;
+              height: 100%;
+            }
+          }
+
+          .info {
+            width: 200px;
+            padding: 0 13px;
+            
+            .name,
+            .author {
+              width: 100%;
+              overflow: hidden;
+              white-space: nowrap;
+              text-overflow: ellipsis;
+            }
+
+            .name {
+              font-size: 19px;
+              font-weight: 600;
+              color: #777777;
+            }
+
+            .author {
+              font-size: 15px;
+              color: #bbb;
+            }
+          }
+
+          .operate {
+            width: 90px;
+            font-size: 16px;
+            padding-left: 10px;
+            vertical-align: middle;
+            color: #979797;
+
+            .btn {
+              display: inline-block;
+              vertical-align: top;
+              cursor: pointer;
+              transition: color .4s;
+
+              &:hover {
+                color: #666;
+              }
+
+              &.delete,
+              &.edit {
+                margin-left: 10px;
+              }
+            }
+
+          }
+        }
       }
 
       .form-creator {
@@ -53,6 +141,7 @@ main.section {
             padding: 0;
             margin: 0;
             width: 100%;
+            background: none;
           }
 
           input {
@@ -61,6 +150,7 @@ main.section {
           }
 
           textarea {
+            padding: 8px;
             border: 3px solid #e9e8ea;
             resize: unset;
             height: 200px;
@@ -83,8 +173,50 @@ main.section {
       .form-switch {
         position: absolute;
         background: #ffdbcc;
-        left: 0;
-        // right: 0;
+        padding: 33px 0;
+        padding-bottom: 85px;
+        right: 0;
+        text-align: center;
+        transition-property: right transform;
+        transition-duration: .4s;
+
+        &.left {
+          right: 100%;
+          transform: translateX(100%);
+        }
+
+        &::before {
+          content: "";
+          display: inline-block;
+          width: 0;
+          height: 100%;
+        }
+
+        .title {
+          width: 98%;
+          color: #ff8160;
+          text-shadow: 0 0 5px #eb7558;
+          display: inline-block;
+          font-size: 40px;
+          text-align: center;
+          font-weight: 600;
+          vertical-align: top;
+        }
+
+        .button {
+          vertical-align: bottom;
+          display: inline-block;
+          font-size: 22px;
+          font-weight: 600;
+          color: #eb7558;
+          text-shadow: 0 0 2px #eb7558;
+          cursor: pointer;
+          transition: all .3s;
+
+          &:hover {
+            color: #50bada;
+          }
+        }
       }
     }
   }
