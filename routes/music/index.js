@@ -22,11 +22,11 @@ router.get('/', function (req, res, next) {
 });
 
 /**
- * * get the song by id
+ * * get the song by file name
  */
-router.get('/:id', function (req, res, next) {
-  let id = req.params.id;
-  musicDB.fetchAll().filter({ id }).get(data => {
+router.get('/:name', function (req, res, next) {
+  let name = req.params.name;
+  musicDB.fetchAll().filter({ name: new RegExp(name, 'ig') }).get(data => {
     res.send(data)
   }, error => {
     res.send(error);
