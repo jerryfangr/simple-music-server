@@ -13,7 +13,7 @@ router.use((req, res, next) => {
 });
 
 router.get('/', function(req, res, next) {
-  res.redirect('/uploader/dist/uploader.html')
+  res.redirect('/uploader/dist/index.html')
 });
 
 router.get('/uploader/:fileName', function (req, res, next) {
