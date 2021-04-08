@@ -29,7 +29,7 @@ router.delete('/:fileName', function (req, res, next) {
   let filepath = path.join('db/music/file', fileName);
   fs.unlink(filepath, () => {
     res.json({
-      status: 'ok',
+      status: 'fail',
       result: {},
       error: {}
     });
@@ -52,7 +52,14 @@ router.use(fileUpload({
     res.writeHead(500, {
       Connection: 'close'
     });
-    res.end('File is too large');
+    res.json({
+      status: 'ok',
+      result: {},
+      error: {
+        code: 400,
+        describe: 'File is too large'
+      }
+    });
   }
 }));
 

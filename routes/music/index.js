@@ -15,9 +15,20 @@ router.options('/', function (req, res, next) {
  */
 router.get('/', function (req, res, next) {
   musicDB.fetchAll().get((data) => {
-    res.send(data)
+    res.json({
+      status: 'ok',
+      result: data,
+      error: {}
+    });
   }, error => {
-    res.send(error);
+    res.json({
+      status: 'fail',
+      result: {},
+      error: {
+        code: 500,
+        describe: 'json db error'
+      }
+    });
   })
 });
 
@@ -26,10 +37,22 @@ router.get('/', function (req, res, next) {
  */
 router.get('/:name', function (req, res, next) {
   let name = req.params.name;
-  musicDB.fetchAll().filter({ name: new RegExp(name, 'ig') }).get(data => {
-    res.send(data)
+  musicDB.fetchAll().filter({ name: new RegExp(name, 'im') }).get(datas => {
+    console.log(datas);
+    res.json({
+      status: 'ok',
+      result: datas,
+      error: {}
+    });
   }, error => {
-    res.send(error);
+    res.json({
+      status: 'fail',
+      result: {},
+      error: {
+        code: 500,
+        describe: 'json db error'
+      }
+    });
   })
 });
 
@@ -38,9 +61,20 @@ router.get('/:name', function (req, res, next) {
  */
 router.post('/', function (req, res, next) {
   musicDB.fetchAll().add(req.body).send(() => {
-    res.send('success');
+    res.json({
+      status: 'ok',
+      result: {message: 'create success'},
+      error: {}
+    });
   }, error => {
-    res.send(error);
+    res.json({
+      status: 'fail',
+      result: {},
+      error: {
+        code: 500,
+        describe: 'json db error'
+      }
+    });
   })
 });
 
@@ -52,9 +86,20 @@ router.put('/:id', function (req, res, next) {
   let id = req.params.id || req.body.id;
   data.id = id;
   musicDB.fetchAll().update(data).send(() => {
-    res.send('update success');
+    res.json({
+      status: 'ok',
+      result: { message: 'update success' },
+      error: {}
+    });
   }, error => {
-    res.send(error);
+    res.json({
+      status: 'fail',
+      result: {},
+      error: {
+        code: 500,
+        describe: 'json db error'
+      }
+    });
   })
 });
 
@@ -64,9 +109,20 @@ router.put('/:id', function (req, res, next) {
 router.delete('/:id', function (req, res, next) {
   let id = req.params.id;
   musicDB.fetchAll().remove(id).send(() => {
-    res.send('success');
+    res.json({
+      status: 'ok',
+      result: { message: 'delete success' },
+      error: {}
+    });
   }, error => {
-    res.send(error);
+    res.json({
+      status: 'fail',
+      result: {},
+      error: {
+        code: 500,
+        describe: 'json db error'
+      }
+    });
   })
 });
 

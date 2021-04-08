@@ -105,7 +105,7 @@ class JsonDatabase {
           }
         }
         return true;
-      })
+      });
     });
     return this;
   }
