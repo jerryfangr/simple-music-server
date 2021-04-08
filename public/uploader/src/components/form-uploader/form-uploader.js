@@ -137,7 +137,7 @@ class FormView extends View {
   /**
    * * get form input value
    */
-  getInput() {
+  getFormInput() {
     const formData = new FormData(this.songFormDom);
     return {
       cover: formData.get('cover') || '',
@@ -146,6 +146,18 @@ class FormView extends View {
       url: formData.get('url') || '',
       lyric: formData.get('lyric') || '',
     }
+  }
+
+  /**
+   * * set form input value
+   * @param {Object} data 
+   */
+  setFormInput(data) {
+    this.name = data.name || '';
+    this.cover = data.cover || '';
+    this.singer = data.singer || '';
+    this.url = data.url || '';
+    this.lyric = data.lyric || '';
   }
 
   /**
@@ -166,6 +178,7 @@ class FormModel extends Model {
   constructor() {
     super();
     this.data = [];
+    this.editItem = {};
     this.token = undefined;
     this.timer = undefined;
     this.axios = axios.create({
@@ -204,6 +217,11 @@ class FormModel extends Model {
   submitForm(data) {
     return this.axios.post(API.music, data, {
       params: { token: this.token },
+    }).then(res => {
+      if (res.data.status === 'ok') {
+        this.data.push(data)
+      }
+      return res;
     });
   }
 
@@ -214,6 +232,11 @@ class FormModel extends Model {
   fetchAll() {
     return this.axios.get(API.music, {
       params: { token: this.token },
+    }).then(res => {
+      if (res.data.status === 'ok') {
+        return this.data = res.data.result;
+      }
+      return []
     });
   }
 
@@ -250,7 +273,7 @@ class FormModel extends Model {
     }).then(res => {
       if (res.data.status === 'ok') {
         this.data.splice(index, 1);
-        return JSON.parse(JSON.stringify(this.data));
+        return res;
       } else {
         throw new Error(this.data.error)
       }
@@ -274,17 +297,12 @@ class FormModel extends Model {
 class FormController extends Controller {
   constructor(view, model) {
     super(view, model);
-  }
-
-  beforeBind() {
+    this.status = 'create';
   }
 
   bindEvents() {
     this.bindEvent(document, 'webkitvisibilitychange', () => { this.model.update(); });
-
-    eventHub.on('switch-uploader', data => {
-      this.view.toggle(data === 'form');
-    });
+    eventHub.on('switch-uploader', data => { this.view.toggle(data === 'form');});
 
     this.bindEvent(this.view.formSwitchDom, 'click', e => {
       const newStatus = this.view.status === 'list' ? 'create' : 'list';
@@ -295,42 +313,59 @@ class FormController extends Controller {
       const value = e.target?.value;
       if (value) {
         this.model.searchByName(value).then(data => {
-          this.view.formList = data;
+          this.updateFormListView();
         });
       }
-
       if (value === '') {
         this.view.formList = [];
       }
     }, 800));
 
     this.listen(this.view.formListDom, '.delete', 'click', (event, element) => {
-      // delete
       this.model.deleteByIndex(element.dataset.index).then(data => {
-        this.view.formList = data;
+        this.updateFormListView();
       }, error => {
         console.log(error);
       });
     });
 
     this.listen(this.view.formListDom, '.edit', 'click', (event, element) => {
-      // edit
-      console.log(element);
+      this.status = 'edit';
+      const index = element.dataset.index;
+      if (index !== undefined) {
+        let itemData = this.model.data[index];
+        this.model.editItem = itemData || {};
+        this.view.setFormInput(itemData);
+        this.view.switchTo('create');
+      }
     });
-
 
     this.bindEvent(this.view.songFormDom, 'submit', e => {
       e.preventDefault();
       e.stopPropagation();
-
-      const data = this.view.getInput();
-      this.model.submitForm(data).then(() => {
-        console.log('success');
-      })
+      const data = this.view.getFormInput();
+      if (this.status === 'edit') {
+        if (this.model.editItem.id !== undefined) {
+          data.id = this.model.editItem.id;
+          this.model.editItem = {};
+          this.model.updateForm(data).then(() => {
+            this.updateFormListView();
+          })
+        }
+      } else {
+        this.model.submitForm(data).then(() => {
+          this.updateFormListView();
+        })
+      }
     });
-
   }
 
+  /**
+   * * update form list in view
+   */
+  updateFormListView() {
+    this.view.formList = JSON.parse(JSON.stringify(this.model.data));
+  }
 }
 
 const view = new FormView({
