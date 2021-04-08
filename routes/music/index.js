@@ -38,7 +38,6 @@ router.get('/', function (req, res, next) {
 router.get('/:name', function (req, res, next) {
   let name = req.params.name;
   musicDB.fetchAll().filter({ name: new RegExp(name, 'im') }).get(datas => {
-    console.log(datas);
     res.json({
       status: 'ok',
       result: datas,
