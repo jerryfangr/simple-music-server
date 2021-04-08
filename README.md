@@ -24,7 +24,7 @@
    node ./bin/www
    ```
 
-5. **open http://localhost:33333 in your browser(chrome/firefox/edg/ie10+)**
+5. **open http://localhost:39999 in your browser(chrome/firefox/edg/ie10+)**
 
 
 
