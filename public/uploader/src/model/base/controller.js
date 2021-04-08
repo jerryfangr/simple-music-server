@@ -41,7 +41,7 @@ export default class Controller {
    */
   bindEvent(element, eventName, callback, options) {
     options = options || {};
-    element.addEventListener(eventName, e => {
+    element && element.addEventListener(eventName, e => {
       callback.call(e.target, e);
     }, options)
   }
@@ -57,5 +57,23 @@ export default class Controller {
       e.preventDefault();
       isAll && e.stopPropagation();
     });
+  }
+
+  /**
+   * * create a debunce function
+   * @param {Function} callback 
+   * @param {Number} delay  
+   * @returns 
+   */
+  debunceFunction(callback, delay) {
+    const self = this;
+    let timer = undefined;
+    delay = delay || 50;
+    return function () {
+      clearTimeout(timer);
+      timer = setTimeout(() => {
+        callback.apply(self, arguments);
+      }, delay)
+    }
   }
 }

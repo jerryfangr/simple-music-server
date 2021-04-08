@@ -17,6 +17,9 @@ export default class View {
    */
   setAttr(key, value, callBack) {
     const self = this;
+    if (self[key] !== undefined) {
+      throw new Error(`Cannot redefine property key ${key}  `);
+    }
 
     Object.defineProperty(self.$data, key, {
       enumerable: true,
