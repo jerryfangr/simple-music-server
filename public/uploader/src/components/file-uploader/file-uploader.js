@@ -127,19 +127,16 @@ class UploadView extends View {
     super(options);
     this.state = STATE.WAIT_SELECT;
     // uploadBox
-    this.uploadBoxDom = this.qs('#uploadBox');
-    this.tipsDom = this.qs('#uploadBox > .tip > .text');
+    this.uploadBoxDom = this.eqs('#uploadBox');
     // uploadProgress
-    this.uploadProgressDom = this.qs('#uploadProgress');
-    this.progressRight = this.qs('#progressRight');
-    this.progressLeft = this.qs('#progressLeft');
+    this.uploadProgressDom = this.eqs('#uploadProgress');
+    this.progressRight = this.eqs('#progressRight');
+    this.progressLeft = this.eqs('#progressLeft');
     this.isUploadHalf = false;
-    this.uploadPercentDom = this.qs('#uploadProgress #progressPercent');
     // uploaLink
-    this.uploaLinkDom = this.qs('#uploaLink');
-    this.fileLinkDom = this.qs('#uploaLink #fileLink');
-    this.copyButtonDom = this.qs('#uploaLink #copyButton');
-    this.backButtonDom = this.qs('#uploaLink #backButton');
+    this.uploaLinkDom = this.eqs('#uploaLink');
+    this.copyButtonDom = this.eqs('#copyButton');
+    this.backButtonDom = this.eqs('#backButton');
   }
 
   /**
@@ -147,17 +144,9 @@ class UploadView extends View {
    * * ex: {{ progressPercent }} => 0.00%
    */
   beforeRender() {
-    this.setAttr('tips', 'Drag & Drop File here to upload', (value) => {
-      this.tipsDom.textContent = value;
-    });
-
-    this.setAttr('progressPercent', '0.00%', (value) => {
-      this.uploadPercentDom.textContent = value;
-    });
-
-    this.setAttr('fileLink', 'https://www.example.com/xxx', (value) => {
-      this.fileLinkDom.textContent = value;
-    });
+    this.simpleSetAttr('tips', 'Drag & Drop File here to upload', '#uploadBox > .tip > .text');
+    this.simpleSetAttr('progressPercent', '0.00%', '#progressPercent');
+    this.simpleSetAttr('fileLink', 'https://www.example.com/xxx', '#fileLink');
   }
 
   /**

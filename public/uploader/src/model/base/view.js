@@ -41,6 +41,36 @@ export default class View {
     })
   }
 
+  /**
+   * * use a simple way to set a react value
+   * @param {String} key
+   * @param {any} value
+   * @param {String} selector
+   * @param {String} propName 
+   */
+  simpleSetAttr(key, value, selector, propName) {
+    propName = propName || 'textContent';
+    const uniqueName = this.getUniquePropName();
+    this.setAttr(key, value, (value) => {
+      this[uniqueName] = this[uniqueName] || this.eqs(selector);
+      this[uniqueName][propName] = value;
+    });
+  }
+
+  /**
+   * * create a prototype name which is donot existed
+   * @returns 
+   */
+  getUniquePropName() {
+    let uniqueName = '_uniqueDom-' + new Date().getTime();
+    uniqueName += Math.floor(Math.random() * 10000);
+    uniqueName += 'end';
+    if (this[uniqueName] !== undefined) {
+      return this.getUniquePropName();
+    }
+    return uniqueName;
+  }
+
 /**
  * * document.querySelector
  * @param {String} selector

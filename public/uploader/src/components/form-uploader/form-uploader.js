@@ -22,9 +22,9 @@ const TEMPLATE = `
     <div class="title">Song</div>
 
     <form id="songForm" class="form">
-      <input type="text" name="cover" value="{{ cover }}" placeholder="cover url">
       <input type="text" name="name" value="{{ name }}" placeholder="song name">
       <input type="text" name="singer" value="{{ singer }}" placeholder="singer name">
+      <input type="text" name="cover" value="{{ cover }}" placeholder="cover url">
       <input type="text" name="url" value="{{ url }}" placeholder="song url">
       <textarea name="lyric"cols="40" rows="10" placeholder="song lyric">{{lyric}}</textarea>
       <button class="submit-button" type="submit">save</button>
@@ -49,22 +49,22 @@ class FormView extends View {
     this.songFormDom = this.eqs('#songForm');
     this.formSwitchDom = this.eqs('#formSwitch');
     this.nameFilterDom = this.eqs('#nameFilter');
-    this.switchTitleDom = this.eqs('#switchTitle');
-    this.switchButtonDom = this.eqs('#switchButton');
   }
 
   beforeRender() {
-    this.setAttr('switchTitle', 'Form list', (value) => {
-      this.switchTitleDom.textContent = value;
-    });
+    this.simpleSetAttr('switchTitle', 'Form list', '#switchTitle');
+    this.simpleSetAttr('switchButton', '< Create', '#switchButton');
 
-    this.setAttr('switchButton', '< Create', (value) => {
-      this.switchButtonDom.textContent = value;
-    });
+    this.simpleSetAttr('name', '', '#songForm > input[name="name"]', 'value');
+    this.simpleSetAttr('singer', '', '#songForm > input[name="singer"]', 'value');
+    this.simpleSetAttr('cover', '', '#songForm > input[name="cover"]', 'value');
+    this.simpleSetAttr('url', '', '#songForm > input[name="url"]', 'value');
+    this.simpleSetAttr('lyric', '', '#songForm > textarea[name="lyric"]');
 
     this.setAttr('formList', [], (value) => {
       this.formListDom.innerHTML = '';
-      value.forEach(data => {
+      value.forEach((data, index) => {
+        data.index = index;
         const fomItem = this.createFormItem(data);
         this.formListDom.appendChild(fomItem);
       })
@@ -93,12 +93,12 @@ class FormView extends View {
           <use xlink:href="#icon-download"></use>
         </svg>
       </a>
-      <div class="btn delete" data-id="${data.id || '-1'}">
+      <div class="btn delete" data-index="${data.index}">
         <svg class="icon" aria-hidden="true">
           <use xlink:href="#icon-delete"></use>
         </svg>
       </div>
-      <div class="btn edit">
+      <div class="btn edit" data-index=${data.index}>
         <svg class="icon" aria-hidden="true">
           <use xlink:href="#icon-edit"></use>
         </svg>
@@ -165,6 +165,7 @@ class FormView extends View {
 class FormModel extends Model {
   constructor() {
     super();
+    this.data = [];
     this.token = undefined;
     this.timer = undefined;
     this.axios = axios.create({
@@ -216,11 +217,56 @@ class FormModel extends Model {
     });
   }
 
+  /**
+   * * search forms
+   * @param {String} name 
+   * @returns {Array}
+   */
   searchByName(name) {
     const url = API.music + '/' + name;
     return this.axios.get(url, {
       params: { token: this.token },
-    });
+    }).then(res => {
+      if (res.data.status === 'ok') {
+        return this.data = res.data.result;
+      }
+      return []
+    })
+  }
+
+  /**
+   * * delete form
+   * @param {Number} index 
+   * @returns 
+   */
+  deleteByIndex(index) {
+    const data = this.data[index];
+    if (data === undefined) {
+      return
+    }
+    const url = API.music + '/' + data.id;
+    return this.axios.delete(url, {
+      params: { token: this.token },
+    }).then(res => {
+      if (res.data.status === 'ok') {
+        this.data.splice(index, 1);
+        return JSON.parse(JSON.stringify(this.data));
+      } else {
+        throw new Error(this.data.error)
+      }
+    })
+  }
+
+  /**
+   * * update form
+   * @param {String} data 
+   * @returns 
+   */
+  updateForm(data) {
+    const url = API.music + '/' + data.id;
+    return this.axios.put(url, data, {
+      params: { token: this.token },
+    })
   }
 
 }
@@ -240,16 +286,6 @@ class FormController extends Controller {
       this.view.toggle(data === 'form');
     });
 
-    this.bindEvent(this.view.songFormDom, 'submit', e => {
-      e.preventDefault();
-      e.stopPropagation();
-      
-      const data = this.view.getInput();
-      this.model.submitForm(data).then(() => {
-        console.log('success');
-      })
-    });
-
     this.bindEvent(this.view.formSwitchDom, 'click', e => {
       const newStatus = this.view.status === 'list' ? 'create' : 'list';
       this.view.switchTo(newStatus);
@@ -258,17 +294,40 @@ class FormController extends Controller {
     this.bindEvent(this.view.nameFilterDom, 'input', this.debunceFunction(e => {
       const value = e.target?.value;
       if (value) {
-        this.model.searchByName(value).then(res => {
-          if (res.data.status === 'ok') {
-            this.view.formList = res.data.result;
-          }
-        })
+        this.model.searchByName(value).then(data => {
+          this.view.formList = data;
+        });
+      }
+
+      if (value === '') {
+        this.view.formList = [];
       }
     }, 800));
-    // this.view.formListDom
+
     this.listen(this.view.formListDom, '.delete', 'click', (event, element) => {
+      // delete
+      this.model.deleteByIndex(element.dataset.index).then(data => {
+        this.view.formList = data;
+      }, error => {
+        console.log(error);
+      });
+    });
+
+    this.listen(this.view.formListDom, '.edit', 'click', (event, element) => {
+      // edit
       console.log(element);
-    })
+    });
+
+
+    this.bindEvent(this.view.songFormDom, 'submit', e => {
+      e.preventDefault();
+      e.stopPropagation();
+
+      const data = this.view.getInput();
+      this.model.submitForm(data).then(() => {
+        console.log('success');
+      })
+    });
 
   }
 
