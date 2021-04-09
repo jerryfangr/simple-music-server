@@ -63,7 +63,7 @@
 
 ### API simple example
 
-#### get token 
+### get token 
 
 * **request**
 
@@ -83,7 +83,7 @@
 
 
 
-#### get music 
+### get music 
 
 * **request**
 
@@ -113,7 +113,7 @@
   }
   ```
 
-#### create music
+### create music
 
 * **request**
 
@@ -136,7 +136,7 @@
 
 
 
-#### update music
+### update music
 
 * **request**
 
@@ -159,7 +159,7 @@
 
 
 
-#### delete music
+### delete music
 
 * **request**
 
