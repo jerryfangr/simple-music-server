@@ -29,7 +29,7 @@ main.section {
       }
 
       .form-container {
-        padding: 30px;
+        padding: 30px 20px;
         .search {
           text-align: center;
           input {
@@ -39,84 +39,88 @@ main.section {
             padding: 0 20px;
             margin: 0;
             background: #f4f4f5;
-            width: 100%;
+            width: 95%;
             height: 50px;
             border-radius: 25px;
           }
         }
 
-        .form-item {
-          margin-top: 30px;
-          font-size: 0;
-          width: 355px;
-          animation: bounce-in .8s ease-out;
+        .form-list {
+          height: 500px;
+          .scroll();
 
-          .cover,
-          .info,
-          .operate {
-            display: inline-block;
-            vertical-align: middle;
-          }
-
-          .cover {
-            width: 65px;
-            height: 65px;
-            background: #fb7d63;
-            border-radius: 10px;
-            overflow: hidden;
-            .image {
-              width: 100%;
-              height: 100%;
-            }
-          }
-
-          .info {
-            width: 200px;
-            padding: 0 13px;
-            
-            .name,
-            .author {
-              width: 100%;
-              overflow: hidden;
-              white-space: nowrap;
-              text-overflow: ellipsis;
-            }
-
-            .name {
-              font-size: 19px;
-              font-weight: 600;
-              color: #777777;
-            }
-
-            .author {
-              font-size: 15px;
-              color: #bbb;
-            }
-          }
-
-          .operate {
-            width: 90px;
-            font-size: 16px;
-            padding-left: 10px;
-            vertical-align: middle;
-            color: #979797;
-
-            .btn {
+          .form-item {
+            margin-top: 30px;
+            font-size: 0;
+            width: 355px;
+            animation: bounce-in .8s ease-out;
+  
+            .cover,
+            .info,
+            .operate {
               display: inline-block;
-              vertical-align: top;
-              cursor: pointer;
-              transition: color .4s;
-
-              &:hover {
-                color: #666;
-              }
-
-              &.delete,
-              &.edit {
-                margin-left: 10px;
+              vertical-align: middle;
+            }
+  
+            .cover {
+              width: 65px;
+              height: 65px;
+              background: #fb7d63;
+              border-radius: 10px;
+              overflow: hidden;
+              .image {
+                width: 100%;
+                height: 100%;
               }
             }
-
+  
+            .info {
+              width: 200px;
+              padding: 0 13px;
+              
+              .name,
+              .author {
+                width: 100%;
+                overflow: hidden;
+                white-space: nowrap;
+                text-overflow: ellipsis;
+              }
+  
+              .name {
+                font-size: 19px;
+                font-weight: 600;
+                color: #777777;
+              }
+  
+              .author {
+                font-size: 15px;
+                color: #bbb;
+              }
+            }
+  
+            .operate {
+              width: 90px;
+              font-size: 16px;
+              padding-left: 10px;
+              vertical-align: middle;
+              color: #979797;
+  
+              .btn {
+                display: inline-block;
+                vertical-align: top;
+                cursor: pointer;
+                transition: color .4s;
+  
+                &:hover {
+                  color: #666;
+                }
+  
+                &.delete,
+                &.edit {
+                  margin-left: 10px;
+                }
+              }
+            }
           }
         }
       }

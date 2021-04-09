@@ -37,6 +37,45 @@ body {
   height: 100%;
 }
 
+.scroll(@bg-color: inherit) {
+  // chrome
+  &::-webkit-scrollbar {
+    width: 6px;
+    height: 4px;
+  }
+
+  &::-webkit-scrollbar-thumb {
+    background-color: rgba(0, 0, 0, .2);
+    border-radius: 6px;
+  }
+
+  &::-webkit-scrollbar-track {
+    background-color: #eee;
+    border-radius: 6px;
+  }
+
+  // firefox
+  overflow-y: auto;
+  overflow-x: hidden;
+  scrollbar-color: transparent transparent;
+
+  // ie
+	overflow-y: auto;
+	scrollbar-arrow-color: @bg-color;
+	scrollbar-base-color: @bg-color;
+	scrollbar-track-color: @bg-color;
+	scrollbar-shadow-color: @bg-color;
+}
+
+/* common */
+.icon {
+  width: 1em;
+  height: 1em;
+  vertical-align: -0.15em;
+  fill: currentColor;
+  overflow: hidden;
+}
+
 input::-webkit-input-placeholder,
 textarea::-webkit-input-placeholder {
   color: #ccc;
@@ -57,14 +96,6 @@ textarea:-ms-input-placeholder {
   color: #ccc;
 }
 
-/* common */
-.icon {
-  width: 1em;
-  height: 1em;
-  vertical-align: -0.15em;
-  fill: currentColor;
-  overflow: hidden;
-}
 
 
 /* animation */

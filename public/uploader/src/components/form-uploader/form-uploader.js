@@ -153,6 +153,7 @@ class FormView extends View {
    * @param {Object} data 
    */
   setFormInput(data) {
+    console.log('set data', data);
     this.name = data.name || '';
     this.cover = data.cover || '';
     this.singer = data.singer || '';
@@ -289,6 +290,18 @@ class FormModel extends Model {
     const url = API.music + '/' + data.id;
     return this.axios.put(url, data, {
       params: { token: this.token },
+    }).then(res => {
+      if (res.data.status === 'ok') {
+        const index = this.editItem.index;
+        const updateData = this.data[index];
+        if (updateData !== undefined) {
+          this.data[index] = data;
+          this.data[index].id = updateData.id;
+        }
+        return res;
+      } else {
+        throw new Error(this.data.error)
+      }
     })
   }
 
@@ -305,7 +318,9 @@ class FormController extends Controller {
     eventHub.on('switch-uploader', data => { this.view.toggle(data === 'form');});
 
     this.bindEvent(this.view.formSwitchDom, 'click', e => {
-      const newStatus = this.view.status === 'list' ? 'create' : 'list';
+      let newStatus = this.view.status === 'list' ? 'create' : 'list';
+      console.log('this.model.editItem', this.model.editItem);
+      this.view.setFormInput(this.model.editItem);
       this.view.switchTo(newStatus);
     });
 
@@ -335,6 +350,7 @@ class FormController extends Controller {
       if (index !== undefined) {
         let itemData = this.model.data[index];
         this.model.editItem = itemData || {};
+        this.model.editItem.index = index;
         this.view.setFormInput(itemData);
         this.view.switchTo('create');
       }
@@ -347,13 +363,15 @@ class FormController extends Controller {
       if (this.status === 'edit') {
         if (this.model.editItem.id !== undefined) {
           data.id = this.model.editItem.id;
-          this.model.editItem = {};
           this.model.updateForm(data).then(() => {
+            this.status = 'create';
+            this.model.editItem = {};
             this.updateFormListView();
           })
         }
       } else {
         this.model.submitForm(data).then(() => {
+          this.model.editItem = {};
           this.updateFormListView();
         })
       }
