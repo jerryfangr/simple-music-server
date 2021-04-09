@@ -1,9 +1,12 @@
 const BASE_PATH = 'http://localhost:39999';
+// const BASE_PATH = '';
 
 const API = {
   base: BASE_PATH,
+
   /**
-   * * token (music & upload need this query ?token=xxx)
+   * * token (music & file need it (?token=xxx))
+   * GET     /token     get token
    */
   token: BASE_PATH + '/token',
   
