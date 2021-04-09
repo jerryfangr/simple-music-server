@@ -113,9 +113,6 @@
   }
   ```
 
-
-
-
 #### create music
 
 * **request**
@@ -156,26 +153,6 @@
   {
   	"status": "ok",
   	"result": "success",
-  	"error": {}
-  }
-  ```
-
-
-
-#### update music
-
-* **request**
-
-  ```
-  GET /music/id?token=xxx
-  ```
-
-* **reqponse**
-
-  ```json
-  {
-  	"status": "ok",
-  	"result": ,
   	"error": {}
   }
   ```
