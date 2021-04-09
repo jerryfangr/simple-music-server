@@ -26,7 +26,7 @@ export default class View {
       configurable: false,
       get () { return value; },
       set(v) {
-        if (v !== value) {
+        if (v === '' || v !== value) {
           value = v;
           callBack.call(self, v);
         }
