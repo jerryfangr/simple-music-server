@@ -1,5 +1,5 @@
-const BASE_PATH = 'http://localhost:39999';
-// const BASE_PATH = '';
+// const BASE_PATH = 'http://localhost:39999';
+const BASE_PATH = '';
 
 const API = {
   base: BASE_PATH,
