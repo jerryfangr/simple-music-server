@@ -12,11 +12,11 @@ const API = {
   
   /**
    * * music form 
-   * GET     /music     get all songs
-   * GET     /music/id  get one song by id
-   * POST    /music     create a song
-   * PUT     /music/id  update a song
-   * DELETE  /music/id  delete a song
+   * GET     /music       get all songs
+   * GET     /music/name  get songs by name
+   * POST    /music       create a song
+   * PUT     /music/id    update a song
+   * DELETE  /music/id    delete a song
    */
   music: BASE_PATH + '/music',
   
