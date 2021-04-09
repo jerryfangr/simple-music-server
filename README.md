@@ -99,14 +99,14 @@
   	"status": "ok",
   	"result": [
           {
-              id: 0,
-              name: "song aa 1",
-              xxx: "xxx"
+              "id": 0,
+              "name": "song aa 1",
+              "xxx": "xxx"
           },
           {
-              id: 1,
-              name: "song aabb 2",
-              xxx: "xxx"
+              "id": 1,
+              "name": "song aabb 2",
+              "xxx": "xxx"
           }
       ],
   	"error": {}
