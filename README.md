@@ -182,7 +182,7 @@
 
 ## web page
 
-**webpack, mvc **
+**webpack, mvc**
 
 ```bash
 # webpack config 
