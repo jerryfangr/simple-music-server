@@ -17,8 +17,9 @@ router.options('/', function (req, res, next) {
  */
 router.get('/:fileName', function (req, res, next) {
   let fileName = req.params.fileName;
-  let filepath = path.join('db/music/file', fileName);
-  res.sendFile(filepath);
+  let filepath = path.join('db/music', fileName);
+  console.log('filepath', filepath);
+  res.sendFile(filepath, { root: '.' });
 });
 
 /**
@@ -26,7 +27,7 @@ router.get('/:fileName', function (req, res, next) {
  */
 router.delete('/:fileName', function (req, res, next) {
   let fileName = req.params.fileName;
-  let filepath = path.join('db/music/file', fileName);
+  let filepath = path.join('db/music', fileName);
   fs.unlink(filepath, () => {
     res.json({
       status: 'fail',
