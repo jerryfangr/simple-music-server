@@ -52,6 +52,7 @@ class FormView extends View {
   }
 
   beforeRender() {
+    // simpleSetAttr(propName, value, selector)
     this.simpleSetAttr('switchTitle', 'Form list', '#switchTitle');
     this.simpleSetAttr('switchButton', '< Create', '#switchButton');
 
@@ -88,7 +89,7 @@ class FormView extends View {
     </div>
 
     <div class="operate">
-      <a class="btn download" href=${data.url || '#'}"" download>
+      <a class="btn download" data-href="${data.url || '#'}" download>
         <svg class="icon" aria-hidden="true">
           <use xlink:href="#icon-download"></use>
         </svg>
@@ -196,7 +197,7 @@ class FormModel extends Model {
     clearInterval(this.timer);
     this.timer = setInterval(() => {
       this.updateToken();
-    }, 1 * 60 * 1000);
+    }, 5 * 60 * 1000);
   }
 
   /**
@@ -335,6 +336,20 @@ class FormController extends Controller {
         this.view.formList = [];
       }
     }, 800));
+
+    this.listen(this.view.formListDom, '.delete', 'click', (event, element) => {
+      this.model.deleteByIndex(element.dataset.index).then(data => {
+        this.updateFormListView();
+      }, error => {
+        console.log(error);
+      });
+    });
+
+    this.listen(this.view.formListDom, '.download', 'click', (event, element) => {
+      element.href = element.dataset.href + '?token=' + this.model.token;
+      element.dispatchEvent(new Event('click'));
+      setTimeout(() => { element.removeAttribute('href'); })
+    });
 
     this.listen(this.view.formListDom, '.delete', 'click', (event, element) => {
       this.model.deleteByIndex(element.dataset.index).then(data => {
