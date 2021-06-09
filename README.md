@@ -74,7 +74,7 @@
   GET /token
   ```
 
-* **reqponse**
+* **response**
 
   ```json
   {
@@ -95,7 +95,7 @@
   GET /music/aa?token=xxx
   ```
 
-* **reqponse**
+* **response**
 
   ```json
   {
@@ -127,7 +127,7 @@
   name=aaa&singer=bbb
   ```
 
-* **reqponse**
+* **response**
 
   ```json
   {
@@ -150,7 +150,7 @@
   name=aaa&singer=bbb
   ```
 
-* **reqponse**
+* **response**
 
   ```json
   {
@@ -171,7 +171,7 @@
   DELETE /music/1?token=xxx
   ```
 
-* **reqponse**
+* **response**
 
   ```json
   {
